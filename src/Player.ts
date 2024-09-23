@@ -9,22 +9,32 @@ import { Vector2 } from "./Core/Math";
 import { Transform } from "./Core/Transform";
 import { InputController } from "./Input/InputController";
 import { Sprite } from "./Sprites/Sprite";
+import { movesList } from "./Moves/MovesList";
 
 export class Player {
     private speed: Vector2;
     private transform: Transform;
     private sprite?: Sprite;
-    private isGrounded: boolean;
+    //private isGrounded: boolean;
     private inputController: InputController;
+    private movesListLength: number = movesList.length;
 
     constructor(/*spriteSource?*/) {
         this.speed = Vector2.Zero();
         this.transform = new Transform();
         this.transform.Scale.X = 100;
         this.transform.Scale.Y = 120;
-        this.isGrounded = true;
+        //this.isGrounded = true;
         this.sprite = new Sprite(this.transform.Position, "Assets/Player/Char_3.png");
         this.inputController = new InputController();
+
+        addEventListener("keydown", () => {
+            for (let i = 0; i < this.movesListLength; i++) {
+                if (JSON.stringify(this.inputController.Keys) === JSON.stringify(movesList[i])) {
+                    console.log(true);
+                }
+            }
+        });
 
         addEventListener("keyup", () => {
             this.speed.X = 0;
@@ -42,39 +52,6 @@ export class Player {
 
     get Transform() {
         return this.transform;
-    }
-
-    private movePlayer(deltaTime: number) {
-        if (this.speed.X != 0) 
-            this.transform.Position.X += this.speed.X * deltaTime;
-    }
-
-    private checkInput(deltaTime: number, key: string) {
-        this.movePlayer(deltaTime);
-
-        if (this.inputController.CurrentKey === null) {
-            this.speed.X = 0;
-            this.speed.Y = 0;
-        } else {
-            switch (key) {
-                case "ArrowRight":
-                    this.speed.X = 0.5;
-                    break;
-                case "ArrowLeft":
-                    this.speed.X = -0.5;
-                    break;
-                case "ArrowUp":
-                    this.speed.Y += 5;
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-
-    public update(deltaTime: number) {
-        // handle player input and apply gravit
-        this.checkInput(deltaTime, this.inputController.CurrentKey?.keyName!);
     }
 
     public draw(context: CanvasRenderingContext2D): void {

@@ -8,10 +8,10 @@ export class Game {
     private renderingContext: CanvasRenderingContext2D;
     private players: Player[];
     private background: Sprite;
-    
+     
     constructor() {
         this.deltaTime = 0;
-        this.lastTick = 0;
+        this.lastTick = Date.now();
         
         const gameEl = document.querySelector("#game");
         const gameCanvas = document.createElement("canvas");
@@ -24,7 +24,7 @@ export class Game {
         this.renderingContext.imageSmoothingQuality = 'high';
 
         this.players = [];
-        this.background = new Sprite(Vector2.Zero(), "Assets/background-animated.gif");
+        this.background = new Sprite(Vector2.Zero(), "Assets/background-edited.png");
 
         this.initGame();
     }
@@ -42,7 +42,7 @@ export class Game {
     }
 
     countDeltaTime() {
-        let currentTick = performance.now();
+        let currentTick = Date.now();
         this.deltaTime = currentTick - this.lastTick;
         this.lastTick = currentTick;
         const frameTimeEl = document.querySelector("#frame-time-element")! as HTMLSpanElement;
@@ -54,8 +54,7 @@ export class Game {
     updateGame() {
         let playersLength = this.players.length;
         for (let i = 0; i < playersLength; i++) {
-            const player = this.players[i];
-            player.update(this.deltaTime);
+            //const player = this.players[i];
         } 
     }
 
