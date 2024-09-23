@@ -15,8 +15,8 @@ export class Game {
         
         const gameEl = document.querySelector("#game");
         const gameCanvas = document.createElement("canvas");
-        gameCanvas.width = 1280;
-        gameCanvas.height = 720;
+        gameCanvas.width = 1024;
+        gameCanvas.height = 600;
         gameCanvas.id = "game-canvas";
         gameEl?.appendChild(gameCanvas);
         this.renderingContext = gameCanvas.getContext("2d")!;
@@ -24,7 +24,7 @@ export class Game {
         this.renderingContext.imageSmoothingQuality = 'high';
 
         this.players = [];
-        //this.background = new Sprite(Vector2.Zero(), "Assets/background-animated.gif");
+        this.background = new Sprite(Vector2.Zero(), "Assets/background-animated.gif");
 
         this.initGame();
     }
@@ -55,7 +55,7 @@ export class Game {
         let playersLength = this.players.length;
         for (let i = 0; i < playersLength; i++) {
             const player = this.players[i];
-            player.update();
+            player.update(this.deltaTime);
         } 
     }
 
@@ -65,7 +65,7 @@ export class Game {
 
         this.renderingContext.clearRect(0, 0, width, height);
         
-        //this.background.draw(this.renderingContext);
+        this.background.draw(this.renderingContext);
 
         let playersLength = this.players.length;
         for (let i = 0; i < playersLength; i++) {

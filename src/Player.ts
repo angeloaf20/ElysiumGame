@@ -7,6 +7,7 @@ Player needs:
 
 import { Vector2 } from "./Core/Math";
 import { Transform } from "./Core/Transform";
+import { InputController } from "./Input/InputController";
 import { Sprite } from "./Sprites/Sprite";
 
 export class Player {
@@ -14,6 +15,7 @@ export class Player {
     private transform: Transform;
     private sprite?: Sprite;
     private isGrounded: boolean;
+    private inputController: InputController;
 
     constructor(/*spriteSource?*/) {
         this.speed = Vector2.Zero();
@@ -22,22 +24,7 @@ export class Player {
         this.transform.Scale.Y = 120;
         this.isGrounded = true;
         this.sprite = new Sprite(this.transform.Position, "Assets/Player/Char_3.png");
-
-        addEventListener("keydown", (event: KeyboardEvent) => {
-            switch (event.key) {
-                case "ArrowRight":
-                    this.speed.X = 5;
-                    break;
-                case "ArrowLeft":
-                    this.speed.X = -5;
-                    break;
-                case "ArrowUp":
-                    this.speed.Y += 5;
-                    break;
-                default:
-                    break;
-            }
-        });
+        this.inputController = new InputController();
 
         addEventListener("keyup", () => {
             this.speed.X = 0;
@@ -57,34 +44,37 @@ export class Player {
         return this.transform;
     }
 
-    private movePlayer() {
+    private movePlayer(deltaTime: number) {
         if (this.speed.X != 0) 
-            this.transform.Position.X += this.speed.X;
+            this.transform.Position.X += this.speed.X * deltaTime;
     }
 
-    private checkIsGrounded(): boolean {
-        return false;
-    }
+    private checkInput(deltaTime: number, key: string) {
+        this.movePlayer(deltaTime);
 
-    private keepWithinBounds() {
-        const maxWidth = 1280 - this.transform.Scale.X;
-        const maxHeight = 600 + this.transform.Scale.Y;
-
-        if (this.transform.Position.X >= maxWidth) {
-            this.transform.Position.X = maxWidth
-
-
+        if (this.inputController.CurrentKey === null) {
+            this.speed.X = 0;
+            this.speed.Y = 0;
+        } else {
+            switch (key) {
+                case "ArrowRight":
+                    this.speed.X = 0.5;
+                    break;
+                case "ArrowLeft":
+                    this.speed.X = -0.5;
+                    break;
+                case "ArrowUp":
+                    this.speed.Y += 5;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    public update() {
-        if (!this.isGrounded) {
-
-        }
-
-        this.keepWithinBounds();
-
-        this.movePlayer();
+    public update(deltaTime: number) {
+        // handle player input and apply gravit
+        this.checkInput(deltaTime, this.inputController.CurrentKey?.keyName!);
     }
 
     public draw(context: CanvasRenderingContext2D): void {
