@@ -1,27 +1,29 @@
-import { Player } from "../Player";
+import { Player } from "../Entities/Player";
+import { PhysicsWorld } from "../Physics/PhysicsWorld";
 import { Sprite } from "../Sprites/Sprite";
 import { Vector2 } from "./Math";
 
 export class Game {
-    private deltaTime: number;
-    private lastTick: number;
-    private renderingContext: CanvasRenderingContext2D;
+    public static renderingContext: CanvasRenderingContext2D;
+    public PhysicsWorld: PhysicsWorld;
     private players: Player[];
     private background: Sprite;
-     
+    private targetFps: number = 60;
+
+    public static FrameCounter = 0;
+    
     constructor() {
-        this.deltaTime = 0;
-        this.lastTick = Date.now();
-        
         const gameEl = document.querySelector("#game");
         const gameCanvas = document.createElement("canvas");
         gameCanvas.width = 1024;
         gameCanvas.height = 600;
         gameCanvas.id = "game-canvas";
         gameEl?.appendChild(gameCanvas);
-        this.renderingContext = gameCanvas.getContext("2d")!;
-        this.renderingContext.imageSmoothingEnabled = true;
-        this.renderingContext.imageSmoothingQuality = 'high';
+        Game.renderingContext = gameCanvas.getContext("2d")!;
+        Game.renderingContext.imageSmoothingEnabled = true;
+        Game.renderingContext.imageSmoothingQuality = 'high';
+
+        this.PhysicsWorld = new PhysicsWorld();
 
         this.players = [];
         this.background = new Sprite(Vector2.Zero(), "Assets/background-edited.png");
@@ -32,44 +34,43 @@ export class Game {
     private initGame() {
         const mainPlayer = new Player();
         this.players.push(mainPlayer);
+        this.PhysicsWorld.registerPhysicsBody(mainPlayer.PhysicsBody);
     }
 
     gameLoop() {
-        this.countDeltaTime();
+        requestAnimationFrame(() => this.gameLoop());
+        
+        // setInterval(() => {
+        //     this.updateGame();
+        // }, 1000);
+
         this.updateGame();
         this.renderGame();
-        requestAnimationFrame(() => this.gameLoop());
-    }
 
-    countDeltaTime() {
-        let currentTick = Date.now();
-        this.deltaTime = currentTick - this.lastTick;
-        this.lastTick = currentTick;
-        const frameTimeEl = document.querySelector("#frame-time-element")! as HTMLSpanElement;
-        const fpsEl = document.querySelector("#fps-element")! as HTMLSpanElement;
-        frameTimeEl.innerText = `${this.deltaTime}`;
-        fpsEl.innerText = `${Math.floor((1 / this.deltaTime) * 1000)}`;
+        
     }
 
     updateGame() {
+        this.PhysicsWorld.WorldStep();
         let playersLength = this.players.length;
         for (let i = 0; i < playersLength; i++) {
-            //const player = this.players[i];
+            const player = this.players[i];
+            player.update();
         } 
     }
 
     renderGame() {
-        const width = this.renderingContext.canvas.width;
-        const height = this.renderingContext.canvas.height;
+        const width = Game.renderingContext.canvas.width;
+        const height = Game.renderingContext.canvas.height;
 
-        this.renderingContext.clearRect(0, 0, width, height);
+        Game.renderingContext.clearRect(0, 0, width, height);
         
-        this.background.draw(this.renderingContext);
+        this.background.draw(Game.renderingContext);
 
         let playersLength = this.players.length;
         for (let i = 0; i < playersLength; i++) {
             const player = this.players[i];
-            player.draw(this.renderingContext);
+            player.draw();
         }
     }
 }
