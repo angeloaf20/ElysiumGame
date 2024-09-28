@@ -25,7 +25,7 @@ export class Obstacle {
 
     draw() {
         Game.renderingContext.fillStyle = "green";
-        Game.renderingContext.fillRect(50, 400, 800, 100);
+        Game.renderingContext.fillRect(this.physicsBody.Position.X, this.physicsBody.Position.Y, this.physicsBody.Scale.X, this.physicsBody.Scale.Y);
     }
 
     get PhysicsBody() {

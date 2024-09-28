@@ -77,7 +77,10 @@ export class Sprite {
         return this.sourcePosition;
     }
 
-    //get CanvasPosition: 
+    set CanvasPosition(pos: Vector2) {
+        this.canvasPosition.X = pos.X;
+        this.canvasPosition.Y = pos.Y;
+    }
 
     set SourcePosition(pos: Vector2) {
         this.sourcePosition = pos;

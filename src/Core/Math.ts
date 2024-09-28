@@ -7,6 +7,10 @@ export class Vector2 {
         this.Y = y;
     }
 
+    Clone() {
+        return new Vector2(this.X, this.Y);
+    }
+
     static Zero(): Vector2 {
         return new Vector2(0, 0);
     }

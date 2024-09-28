@@ -14,6 +14,8 @@ export class PhysicsBody {
     private isStatic: boolean;
 
     private bounds: Bounds;
+
+    private previousPosition: Vector2;
     
     constructor(bodyOptions: {
         position: Vector2,
@@ -34,10 +36,14 @@ export class PhysicsBody {
         this.isStatic = bodyOptions.isStatic;
 
         this.bounds = new Bounds(this.position, this.scale);
+
+        this.previousPosition = this.position.Clone();
     }
 
     step(gravity: number, airResistance: number) {
         if (this.isStatic) return;
+
+        this.previousPosition = this.position.Clone();
 
         this.velocity.X = this.force.X * this.friction;
         this.velocity.Y = (this.force.Y / this.mass) + (gravity - airResistance);
@@ -45,7 +51,6 @@ export class PhysicsBody {
         this.position.X += this.velocity.X;
         this.position.Y += this.velocity.Y;
 
-        //this.Bounds.checkOverlap()
         this.Bounds.updateBounds(this.position, this.scale);
 
         this.force.X = 0;
@@ -54,6 +59,10 @@ export class PhysicsBody {
     addForce(force: Vector2) {
         this.force.X = force.X;
         this.force.Y = force.Y;
+    }
+
+    public collisionResponse() {
+        this.position.Y = this.previousPosition.Y - 0.1;
     }
 
     get Position(): Vector2 {
@@ -66,6 +75,10 @@ export class PhysicsBody {
 
     get Velocity(): Vector2 {
         return this.velocity;
+    }
+
+    get IsStatic(): boolean {
+        return this.isStatic;
     }
 
     set Position(pos: Vector2) {

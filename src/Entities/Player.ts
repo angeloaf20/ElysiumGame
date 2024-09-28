@@ -18,7 +18,7 @@ export class Player {
 
     constructor(/*spriteSource?*/) {
         this.physicsBody = new PhysicsBody({
-            position: new Vector2(100, 0),
+            position: new Vector2(100, 100),
             scale: new Vector2(200, 220),
             mass: 20, 
             isStatic: false
@@ -71,11 +71,12 @@ export class Player {
                     break;
             }
         }
+
+        this.sprite.CanvasPosition = this.physicsBody.Position;
     }
 
     public draw(): void {
         this.sprite.draw();
-
         Game.renderingContext.strokeRect(this.physicsBody.Position.X, this.physicsBody.Position.Y, this.physicsBody.Scale.X, this.physicsBody.Scale.Y);
     }
 }

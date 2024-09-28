@@ -32,8 +32,9 @@ export class PhysicsWorld {
         
         this.physicsBodies.forEach((body: PhysicsBody, index: number) => {
             for (let nextIndex = index+1; nextIndex < this.physicsBodies.length; nextIndex++) {
-                if (Bounds.checkOverlap(body.Bounds, this.physicsBodies[nextIndex].Bounds))
-                    console.log("Collision");
+                if (Bounds.checkOverlap(body.Bounds, this.physicsBodies[nextIndex].Bounds)) {
+                    body.collisionResponse();
+                }
             }
         });
     }

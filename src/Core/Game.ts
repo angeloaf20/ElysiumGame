@@ -55,11 +55,6 @@ export class Game {
             airResistance: 2.5,
             physicsBodies: [mainPlayer.PhysicsBody, obstacle.PhysicsBody]
         });
-
-        console.log("Player bounds: " + JSON.stringify(mainPlayer.PhysicsBody.Bounds));
-        console.log("Obstcle bounds: " + JSON.stringify(obstacle.PhysicsBody.Bounds));
-
-        console.log(Bounds.checkOverlap(mainPlayer.PhysicsBody.Bounds, obstacle.PhysicsBody.Bounds));
     }
 
     gameLoop() {
@@ -76,7 +71,7 @@ export class Game {
     }
 
     updateGame() {
-        //this.PhysicsWorld.WorldStep();
+        this.PhysicsWorld.WorldStep();
 
         let playersLength = this.players.length;
         for (let i = 0; i < playersLength; i++) {
