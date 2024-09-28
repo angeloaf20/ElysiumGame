@@ -1,4 +1,5 @@
 import { Vector2 } from "../Core/Math";
+import { Bounds } from "./Bounds";
 
 export class PhysicsBody {
     private position: Vector2;
@@ -6,31 +7,46 @@ export class PhysicsBody {
     private mass: number;
 
     private force: Vector2;
-    private acceleration: Vector2;
     private velocity: Vector2;
 
+    private friction: number;
+
     private isStatic: boolean;
+
+    private bounds: Bounds;
     
-    constructor(mass: number, isStatic: boolean) {
-        this.position = Vector2.Zero();
-        this.scale = new Vector2(1, 1);
+    constructor(bodyOptions: {
+        position: Vector2,
+        scale: Vector2,
+        mass: number,
+        isStatic: boolean
+    }) {
+        this.position = bodyOptions.position;
+        this.scale = bodyOptions.scale;
+
         this.velocity = Vector2.Zero();
 
         this.force = Vector2.Zero();
-        this.acceleration = Vector2.Zero();
-        this.mass = mass;
+        this.mass = bodyOptions.mass;
 
-        this.isStatic = isStatic;
+        this.friction = 0.45;
+
+        this.isStatic = bodyOptions.isStatic;
+
+        this.bounds = new Bounds(this.position, this.scale);
     }
 
     step(gravity: number, airResistance: number) {
         if (this.isStatic) return;
 
-        this.acceleration.X = this.force.X / this.mass;
-        this.acceleration.Y = this.force.Y + (gravity - airResistance);
+        this.velocity.X = this.force.X * this.friction;
+        this.velocity.Y = (this.force.Y / this.mass) + (gravity - airResistance);
 
-        this.velocity.X = this.acceleration.X;
         this.position.X += this.velocity.X;
+        this.position.Y += this.velocity.Y;
+
+        //this.Bounds.checkOverlap()
+        this.Bounds.updateBounds(this.position, this.scale);
 
         this.force.X = 0;
     }
@@ -38,10 +54,6 @@ export class PhysicsBody {
     addForce(force: Vector2) {
         this.force.X = force.X;
         this.force.Y = force.Y;
-    }
-
-    checkOverlap() {
-
     }
 
     get Position(): Vector2 {
@@ -68,5 +80,9 @@ export class PhysicsBody {
 
     set Scale(scale: Vector2) {
         this.scale.X = scale.X; 
+    }
+
+    get Bounds() {
+        return this.bounds;
     }
 }

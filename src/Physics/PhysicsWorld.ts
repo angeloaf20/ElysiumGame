@@ -1,13 +1,20 @@
+import { Bounds } from "./Bounds";
 import { PhysicsBody } from "./PhysicsBody";
 
 export class PhysicsWorld {
     private physicsBodies: PhysicsBody[];
     private physicsBodiesCount: number;
-    private gravity: number = 3.5;
-    private airResistance: number = 2;
+    private gravity: number;
+    private airResistance;
 
-    constructor() {
-        this.physicsBodies = [];
+    constructor(worldOptions: {
+        gravity: number,
+        airResistance: number,
+        physicsBodies: PhysicsBody[],
+    }) {
+        this.gravity = worldOptions.gravity;
+        this.airResistance = worldOptions.airResistance;
+        this.physicsBodies = worldOptions.physicsBodies;
         this.physicsBodiesCount = this.physicsBodies.length;
     }
 
@@ -23,9 +30,15 @@ export class PhysicsWorld {
     }
 
     public WorldStep() {
-        for (let i = 0; i < this.physicsBodiesCount; i++) {
-            let body = this.physicsBodies[i];
+        this.physicsBodies.forEach((body: PhysicsBody) => {
             body.step(this.gravity, this.airResistance);
-        }
+        });
+        
+        this.physicsBodies.forEach((body: PhysicsBody, index: number) => {
+            for (let nextIndex = index+1; nextIndex < this.physicsBodies.length; nextIndex++) {
+                if (Bounds.checkOverlap(body.Bounds, this.physicsBodies[nextIndex].Bounds))
+                    console.log("Collision");
+            }
+        });
     }
 }

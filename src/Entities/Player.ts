@@ -5,35 +5,44 @@ Player needs:
 - physics box
 */
 
-import { Sprite } from "../Sprites/Sprite";
+import { Vector2 } from "../Core/Math";
 import { Game } from "../Core/Game";
 import { PhysicsBody } from "../Physics/PhysicsBody";
-import { Vector2 } from "../Core/Math";
 import { InputReader } from "../Input/InputReader";
+import { Sprite } from "../Sprites/Sprite";
 
 export class Player {
     private physicsBody: PhysicsBody;
-    private sprite?: Sprite;
+    private sprite: Sprite;
     private inputReader: InputReader;
 
     constructor(/*spriteSource?*/) {
-        this.physicsBody = new PhysicsBody(2, false);
-        this.physicsBody.Scale.X = 200;
-        this.physicsBody.Scale.Y = 220;
-        this.sprite = new Sprite(this.physicsBody.Position, "Assets/Player/Char_3.png");
+        this.physicsBody = new PhysicsBody({
+            position: new Vector2(100, 0),
+            scale: new Vector2(200, 220),
+            mass: 20, 
+            isStatic: false
+        });
 
+        //this.physicsBody.Bounds.updateBounds(this.physicsBody.Position, this.physicsBody.Scale);
+
+        this.sprite = new Sprite({
+            sourcePos: new Vector2(0, 0),
+            sourceScale: new Vector2(300, 300),
+            canvasPos: this.physicsBody.Position,
+            canvasScale: this.physicsBody.Scale,
+            imageSource: "Assets/Player/test-sprites-3.png"
+        });
         
         this.inputReader = new InputReader();
 
-        addEventListener("keydown", (event: KeyboardEvent) => {
-            if (event.code === "ArrowRight") {
-                
-            }
+        let index = 0;
+        addEventListener("keydown", () => {
+            index += 1;
+            this.sprite.changeSprite(index % 7);
         });
-
-        addEventListener("keyup", (event: KeyboardEvent) => {
-            
-        })
+        
+        
     }
 
     get PhysicsBody(): PhysicsBody {
@@ -45,17 +54,28 @@ export class Player {
     }
 
     public update() {
-        this.inputReader.update();
+        this.inputReader.update(); 
 
-        
+        if (this.inputReader.InputtedMoves.Data.length > 0) {
+            const key = this.inputReader.InputtedMoves.Peek();
+            
+            switch(key) {
+                case "MoveLeft": 
+                    this.physicsBody.addForce(new Vector2(-5, 0));
+                    break;
+                case "MoveRight":
+                    this.physicsBody.addForce(new Vector2(5, 0));
+                    break;
+                case "Jump":
+                    this.physicsBody.addForce(new Vector2(2, 3));
+                    break;
+            }
+        }
     }
 
     public draw(): void {
-        if (this.sprite) {
-            Game.renderingContext.drawImage(this.sprite.Image, 45, 0, 85, 60, this.physicsBody.Position.X, this.physicsBody.Position.Y, this.physicsBody.Scale.X, this.physicsBody.Scale.Y);
-        } else {
-            console.log("No sprite found for player");
-            Game.renderingContext.fillRect(this.physicsBody.Position.X, this.physicsBody.Position.Y, this.physicsBody.Scale.X, this.physicsBody.Scale.Y);
-        }
+        this.sprite.draw();
+
+        Game.renderingContext.strokeRect(this.physicsBody.Position.X, this.physicsBody.Position.Y, this.physicsBody.Scale.X, this.physicsBody.Scale.Y);
     }
 }

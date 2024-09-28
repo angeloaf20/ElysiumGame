@@ -1,38 +1,48 @@
 import { InputController } from "./InputController";
 import { Moves } from "../Moves/MovesList";
+import { Queue } from "../Core/Queue";
 
 export class InputReader {
     private inputController: InputController;
-    //private recognizedMoves: { [key: string]: boolean }[];
+    //private inputtedMoves: Queue<{[key: string]: boolean}> = new Queue();
+    private inputtedMoves: Queue<string> = new Queue();
 
     constructor() {
         this.inputController = new InputController();
-        //this.recognizedMoves = [];
     }
 
     update() {
         const keys = JSON.stringify(this.inputController.Keys);
 
+        if (keys === JSON.stringify(Moves.Default)) {
+            this.inputtedMoves.Dequeue();
+            return;
+        }
+
         switch (keys) {
             case JSON.stringify(Moves.MoveLeft):
-                console.log("MoveLeft");
+                this.inputtedMoves.Enqueue("MoveLeft");
                 break;
             case JSON.stringify(Moves.MoveRight):
-                console.log("MoveRight");
+                this.inputtedMoves.Enqueue("MoveRight");
                 break;
             case JSON.stringify(Moves.MoveDown):
-                console.log("MoveDown");
+                this.inputtedMoves.Enqueue("MoveDown");
                 break;
             case JSON.stringify(Moves.Jump):
-                console.log("Jump");
+                this.inputtedMoves.Enqueue("Jump");
                 break;
             case JSON.stringify(Moves.Neutral):
-                console.log("Neutral");
+                this.inputtedMoves.Enqueue("Neutral");
                 break;
             case JSON.stringify(Moves.NeutralUp):
-                console.log("NeutralUp");
+                this.inputtedMoves.Enqueue("NeutralUp");
                 break;
         }
+    }
+
+    get InputtedMoves() {
+        return this.inputtedMoves;
     }
 
 
