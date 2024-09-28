@@ -11,7 +11,7 @@ export class Game {
     private players: Player[];
     private background: Sprite;
     private obstacles: Obstacle[];
-    private targetFps: number = 60;
+    //private targetFps: number = 60;
 
     public static FrameCounter = 0;
     

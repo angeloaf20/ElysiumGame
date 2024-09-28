@@ -3,7 +3,6 @@ import { PhysicsBody } from "./PhysicsBody";
 
 export class PhysicsWorld {
     private physicsBodies: PhysicsBody[];
-    private physicsBodiesCount: number;
     private gravity: number;
     private airResistance;
 
@@ -15,18 +14,15 @@ export class PhysicsWorld {
         this.gravity = worldOptions.gravity;
         this.airResistance = worldOptions.airResistance;
         this.physicsBodies = worldOptions.physicsBodies;
-        this.physicsBodiesCount = this.physicsBodies.length;
     }
 
     registerPhysicsBody(body: PhysicsBody) { 
         this.physicsBodies.push(body);
-        this.physicsBodiesCount = this.physicsBodies.length;
     }
 
     unregisterPhysicsBody(body: PhysicsBody) {
         const bodyIndex= this.physicsBodies.indexOf(body);
         this.physicsBodies.splice(bodyIndex, 1);
-        this.physicsBodiesCount = this.physicsBodies.length;
     }
 
     public WorldStep() {
